@@ -5,10 +5,6 @@
   padding: 20px;
 }
 
-.fc-view-harness {
-    height: 650px !important; 
-}
-
 .modal {
   position: fixed;
   top: 0;

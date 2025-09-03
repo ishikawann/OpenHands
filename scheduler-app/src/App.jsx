@@ -48,6 +48,7 @@ function App() {
         events={events}
         dateClick={handleDateClick}
         fixedWeekCount={true}
+        height="auto"
       />
       {modalOpen && (
         <EventForm
