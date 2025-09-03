@@ -5,14 +5,17 @@ import interactionPlugin from '@fullcalendar/interaction';
 import './App.css';
 
 function App() {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState(() => {
+    const storedEvents = localStorage.getItem('events');
+    try {
+      return storedEvents ? JSON.parse(storedEvents) : [];
+    } catch (error) {
+      console.error("Failed to parse events from localStorage:", error);
+      return [];
+    }
+  });
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
-
-  useEffect(() => {
-    const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
-    setEvents(storedEvents);
-  }, []);
 
   useEffect(() => {
     localStorage.setItem('events', JSON.stringify(events));
