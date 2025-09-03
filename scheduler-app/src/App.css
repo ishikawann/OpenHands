@@ -5,6 +5,13 @@
   padding: 20px;
 }
 
+/* Prevent layout shifts by setting a min-width for the toolbar title */
+.fc-toolbar-title {
+  min-width: 180px;
+  text-align: center;
+}
+
+
 .modal {
   position: fixed;
   top: 0;
