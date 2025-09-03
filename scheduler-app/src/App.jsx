@@ -47,6 +47,7 @@ function App() {
         weekends={true}
         events={events}
         dateClick={handleDateClick}
+        fixedWeekCount={true}
       />
       {modalOpen && (
         <EventForm
