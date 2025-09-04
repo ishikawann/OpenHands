@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import holiday_jp from '@holiday-jp/holiday_jp';
 import './App.css';
 
 function App() {
@@ -16,6 +17,13 @@ function App() {
   });
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [holidays, setHolidays] = useState([]);
+
+  useEffect(() => {
+    const currentYear = new Date().getFullYear();
+    const fetchedHolidays = holiday_jp.between(new Date(currentYear, 0, 1), new Date(currentYear, 11, 31));
+    setHolidays(fetchedHolidays.map(holiday => holiday.date.toISOString().split('T')[0]));
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('events', JSON.stringify(events));
@@ -49,6 +57,12 @@ function App() {
         dateClick={handleDateClick}
         fixedWeekCount={true}
         height="auto"
+        dayCellDidMount={function(info) {
+          const dateStr = info.date.toISOString().split('T')[0];
+          if (holidays.includes(dateStr)) {
+            info.el.classList.add('holiday');
+          }
+        }}
       />
       {modalOpen && (
         <EventForm

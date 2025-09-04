@@ -84,3 +84,8 @@
 .fc-day-sat .fc-daygrid-day-number {
   color: blue;
 }
+
+.holiday .fc-daygrid-day-number {
+  color: red;
+}
+
