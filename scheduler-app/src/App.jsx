@@ -106,7 +106,6 @@ function EventForm({ onClose, onAddEvent }) {
           />
           <select value={color} onChange={(e) => setColor(e.target.value)}>
             <option value="#a0d8ef">Blue</option>
-            <option value="#ffb6c1">Red</option>
             <option value="#98d8a8">Green</option>
             <option value="#f0e68c">Yellow</option>
             <option value="#c8a2c8">Purple</option>
