@@ -89,3 +89,9 @@
   color: red;
 }
 
+
+.fc-event {
+  background-color: #a0d8ef; /* 薄い水色 */
+  border: 1px solid #7cbde2;   /* 少し濃い水色のボーダー */
+}
+
