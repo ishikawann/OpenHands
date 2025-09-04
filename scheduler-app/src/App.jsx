@@ -6,7 +6,7 @@ import holiday_jp from '@holiday-jp/holiday_jp';
 import './App.css';
 
 function App() {
-  const [userEvents, setUserEvents] = useState(() => {
+  const [events, setEvents] = useState(() => {
     const storedEvents = localStorage.getItem('events');
     try {
       return storedEvents ? JSON.parse(storedEvents) : [];
@@ -15,31 +15,24 @@ function App() {
       return [];
     }
   });
-  const [holidayEvents, setHolidayEvents] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [holidays, setHolidays] = useState([]);
 
   useEffect(() => {
     const currentYear = new Date().getFullYear();
     const fetchedHolidays = holiday_jp.between(new Date(currentYear, 0, 1), new Date(currentYear, 11, 31));
-    const holidayEvents = fetchedHolidays.map(holiday => {
+    setHolidays(fetchedHolidays.map(holiday => {
       const y = holiday.date.getFullYear();
       const m = String(holiday.date.getMonth() + 1).padStart(2, '0');
       const d = String(holiday.date.getDate()).padStart(2, '0');
-      return {
-        title: holiday.name,
-        start: `${y}-${m}-${d}`,
-        allDay: true,
-        display: 'background',
-        color: '#ff9a9e'
-      };
-    });
-    setHolidayEvents(holidayEvents);
+      return `${y}-${m}-${d}`;
+    }));
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('events', JSON.stringify(userEvents));
-  }, [userEvents]);
+    localStorage.setItem('events', JSON.stringify(events));
+  }, [events]);
 
   const handleDateClick = (arg) => {
     setSelectedDate(arg.dateStr);
@@ -55,7 +48,7 @@ function App() {
         id: new Date().toISOString(),
         backgroundColor: color
       };
-      setUserEvents([...userEvents, newEvent]);
+      setEvents([...events, newEvent]);
     }
     setModalOpen(false);
   };
@@ -66,10 +59,19 @@ function App() {
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         weekends={true}
-        events={[...userEvents, ...holidayEvents]}
+        events={events}
         dateClick={handleDateClick}
         fixedWeekCount={true}
         height="auto"
+        dayCellDidMount={function(info) {
+          const y = info.date.getFullYear();
+          const m = String(info.date.getMonth() + 1).padStart(2, '0');
+          const d = String(info.date.getDate()).padStart(2, '0');
+          const dateStr = `${y}-${m}-${d}`;
+          if (holidays.includes(dateStr)) {
+            info.el.classList.add('holiday');
+          }
+        }}
       />
       {modalOpen && (
         <EventForm
