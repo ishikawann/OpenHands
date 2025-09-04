@@ -22,6 +22,25 @@ function App() {
   useEffect(() => {
     const currentYear = new Date().getFullYear();
     const fetchedHolidays = holiday_jp.between(new Date(currentYear, 0, 1), new Date(currentYear, 11, 31));
+    
+    const holidayEvents = fetchedHolidays.map(holiday => {
+      const y = holiday.date.getFullYear();
+      const m = String(holiday.date.getMonth() + 1).padStart(2, '0');
+      const d = String(holiday.date.getDate()).padStart(2, '0');
+      return {
+        title: holiday.name,
+        start: `${y}-${m}-${d}`,
+        allDay: true,
+        backgroundColor: '#ffb6c1',
+        id: `holiday-${y}-${m}-${d}`
+      };
+    });
+    
+    setEvents(prevEvents => {
+      const nonHolidayEvents = prevEvents.filter(event => !event.id?.startsWith('holiday-'));
+      return [...nonHolidayEvents, ...holidayEvents];
+    });
+
     setHolidays(fetchedHolidays.map(holiday => {
       const y = holiday.date.getFullYear();
       const m = String(holiday.date.getMonth() + 1).padStart(2, '0');
@@ -31,7 +50,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('events', JSON.stringify(events));
+    localStorage.setItem('events', JSON.stringify(events.filter(event => !event.id?.startsWith('holiday-'))));
   }, [events]);
 
   const handleDateClick = (arg) => {

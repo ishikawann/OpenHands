@@ -108,6 +108,10 @@
   color: red;
 }
 
+.holiday .fc-daygrid-day-number {
+  color: red;
+}
+
 
 .fc-event {
   background-color: #a0d8ef; /* 薄い水色 */
