@@ -22,7 +22,12 @@ function App() {
   useEffect(() => {
     const currentYear = new Date().getFullYear();
     const fetchedHolidays = holiday_jp.between(new Date(currentYear, 0, 1), new Date(currentYear, 11, 31));
-    setHolidays(fetchedHolidays.map(holiday => holiday.date.toISOString().split('T')[0]));
+    setHolidays(fetchedHolidays.map(holiday => {
+      const y = holiday.date.getFullYear();
+      const m = String(holiday.date.getMonth() + 1).padStart(2, '0');
+      const d = String(holiday.date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }));
   }, []);
 
   useEffect(() => {
@@ -58,7 +63,10 @@ function App() {
         fixedWeekCount={true}
         height="auto"
         dayCellDidMount={function(info) {
-          const dateStr = info.date.toISOString().split('T')[0];
+          const y = info.date.getFullYear();
+          const m = String(info.date.getMonth() + 1).padStart(2, '0');
+          const d = String(info.date.getDate()).padStart(2, '0');
+          const dateStr = `${y}-${m}-${d}`;
           if (holidays.includes(dateStr)) {
             info.el.classList.add('holiday');
           }
