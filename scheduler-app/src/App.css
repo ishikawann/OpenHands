@@ -2,6 +2,8 @@
   font-family: Arial, Helvetica, sans-serif;
   max-width: 900px;
   margin: 40px auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
   padding: 20px;
 }
 
@@ -10,6 +12,14 @@
   min-width: 180px;
   text-align: center;
 }
+.holiday-sun {
+  color: red;
+}
+
+.saturday {
+  color: blue;
+}
+
 
 
 .modal {

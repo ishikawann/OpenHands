@@ -17,9 +17,23 @@ function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
 
-  useEffect(() => {
-    localStorage.setItem('events', JSON.stringify(events));
-  }, [events]);
+  const dayCellContent = (arg) => {
+    return arg.dayNumberText.replace('th', '').replace('st', '');
+  };
+
+  const dayCellClassNames = (arg) => {
+    const date = new Date(arg.date);
+    const dayOfWeek = date.getDay();
+    const dateString = arg.date.toISOString().split('T')[0];
+
+    if (holidays.includes(dateString) || dayOfWeek === 0) {
+      return 'holiday-sun';
+    }
+    if (dayOfWeek === 6) {
+      return 'saturday';
+    }
+    return '';
+  };
 
   const handleDateClick = (arg) => {
     setSelectedDate(arg.dateStr);
@@ -49,6 +63,8 @@ function App() {
         dateClick={handleDateClick}
         fixedWeekCount={true}
         height="auto"
+        dayCellClassNames={dayCellClassNames}
+        dayCellContent={dayCellContent}
       />
       {modalOpen && (
         <EventForm
