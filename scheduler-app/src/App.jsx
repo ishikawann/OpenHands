@@ -39,13 +39,14 @@ function App() {
     setModalOpen(true);
   };
 
-  const handleAddEvent = (title) => {
+  const handleAddEvent = (title, color) => {
     if (title) {
       const newEvent = {
         title,
         start: selectedDate,
         allDay: true,
-        id: new Date().toISOString()
+        id: new Date().toISOString(),
+        backgroundColor: color
       };
       setEvents([...events, newEvent]);
     }
@@ -84,10 +85,11 @@ function App() {
 
 function EventForm({ onClose, onAddEvent }) {
   const [title, setTitle] = useState('');
+  const [color, setColor] = useState('#a0d8ef'); // デフォルトの色
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAddEvent(title);
+    onAddEvent(title, color);
   };
 
   return (
@@ -102,6 +104,14 @@ function EventForm({ onClose, onAddEvent }) {
             placeholder="Event Title"
             required
           />
+          <select value={color} onChange={(e) => setColor(e.target.value)}>
+            <option value="#a0d8ef">Blue</option>
+            <option value="#ffb6c1">Red</option>
+            <option value="#98d8a8">Green</option>
+            <option value="#f0e68c">Yellow</option>
+            <option value="#c8a2c8">Purple</option>
+            <option value="#f5bda6">Orange</option>
+          </select>
           <button type="submit">Add</button>
         </form>
         <button onClick={onClose}>Close</button>
