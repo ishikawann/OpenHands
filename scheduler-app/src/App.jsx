@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import holiday_jp from '@holiday-jp/holiday_jp';
 import './App.css';
@@ -58,12 +59,13 @@ function App() {
     setModalOpen(true);
   };
 
-  const handleAddEvent = (title, color) => {
-    if (title) {
+  const handleAddEvent = (title, color, startTime, endTime) => {
+    if (title && selectedDate) {
       const newEvent = {
         title,
-        start: selectedDate,
-        allDay: true,
+        start: startTime ? `${selectedDate}T${startTime}` : selectedDate,
+        end: endTime ? `${selectedDate}T${endTime}` : null,
+        allDay: !(startTime && endTime),
         id: new Date().toISOString(),
         backgroundColor: color
       };
@@ -75,7 +77,7 @@ function App() {
   return (
     <div className="App">
       <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         weekends={true}
         events={events}
@@ -104,11 +106,13 @@ function App() {
 
 function EventForm({ onClose, onAddEvent }) {
   const [title, setTitle] = useState('');
-  const [color, setColor] = useState('#a0d8ef'); // デフォルトの色
+  const [color, setColor] = useState('#a0d8ef');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAddEvent(title, color);
+    onAddEvent(title, color, startTime, endTime);
   };
 
   return (
@@ -122,6 +126,20 @@ function EventForm({ onClose, onAddEvent }) {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Event Title"
             required
+          />
+          <label htmlFor="startTime">Start Time:</label>
+          <input
+            type="time"
+            id="startTime"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+          />
+          <label htmlFor="endTime">End Time:</label>
+          <input
+            type="time"
+            id="endTime"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
           />
           <select value={color} onChange={(e) => setColor(e.target.value)}>
             <option value="#a0d8ef">Blue</option>
