@@ -18,6 +18,8 @@ function App() {
   });
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [holidays, setHolidays] = useState([]);
 
   useEffect(() => {
@@ -59,7 +61,7 @@ function App() {
     setModalOpen(true);
   };
 
-  const handleAddEvent = (title, color, startTime, endTime) => {
+  const handleAddEvent = (title, color, startTime, endTime, notes) => {
     if (title && selectedDate) {
       const newEvent = {
         title,
@@ -67,12 +69,21 @@ function App() {
         end: endTime ? `${selectedDate}T${endTime}` : null,
         allDay: !(startTime && endTime),
         id: new Date().toISOString(),
-        backgroundColor: color
+        backgroundColor: color,
+        extendedProps: {
+          notes: notes || ''
+        }
       };
       setEvents([...events, newEvent]);
     }
     setModalOpen(false);
   };
+
+  const handleEventClick = (clickInfo) => {
+    setSelectedEvent(clickInfo.event);
+    setIsDetailModalOpen(true);
+  };
+
 
   return (
     <div className="App">
@@ -82,6 +93,7 @@ function App() {
         weekends={true}
         events={events}
         dateClick={handleDateClick}
+        eventClick={handleEventClick}
         fixedWeekCount={true}
         height="auto"
         dayCellDidMount={function(info) {
@@ -109,10 +121,11 @@ function EventForm({ onClose, onAddEvent }) {
   const [color, setColor] = useState('#a0d8ef');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
+  const [notes, setNotes] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAddEvent(title, color, startTime, endTime);
+    onAddEvent(title, color, startTime, endTime, notes);
   };
 
   return (
@@ -141,6 +154,12 @@ function EventForm({ onClose, onAddEvent }) {
             value={endTime}
             onChange={(e) => setEndTime(e.target.value)}
           />
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Notes"
+            rows="3"
+          />
           <select value={color} onChange={(e) => setColor(e.target.value)}>
             <option value="#a0d8ef">Blue</option>
             <option value="#98d8a8">Green</option>
@@ -155,5 +174,32 @@ function EventForm({ onClose, onAddEvent }) {
     </div>
   );
 }
+
+function EventDetailModal({ event, onClose }) {
+  if (!event) return null;
+
+  // Format start and end times for display
+  const startTime = event.start ? new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : 'All day';
+  const endTime = event.end ? new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : '';
+  const startDate = event.start ? new Date(event.start).toLocaleDateString() : '';
+
+  return (
+    <div className="modal">
+      <div className="modal-content">
+        <h2>{event.title}</h2>
+        <p><strong>Date:</strong> {startDate}</p>
+        <p><strong>Time:</strong> {startTime} {endTime && `- ${endTime}`}</p>
+        {event.extendedProps.notes && (
+          <div>
+            <strong>Notes:</strong>
+            <p className="notes-display">{event.extendedProps.notes}</p>
+          </div>
+        )}
+        <button onClick={onClose}>Close</button>
+      </div>
+    </div>
+  );
+}
+
 
 export default App;
